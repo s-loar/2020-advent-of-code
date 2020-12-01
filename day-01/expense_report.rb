@@ -48,6 +48,6 @@ class ExpenseReport
         end
       end
     end
+    puts "No 3 expenses added to 2020"
   end
-  puts "No 3 expenses added to 2020"
 end
