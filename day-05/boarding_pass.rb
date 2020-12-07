@@ -16,17 +16,27 @@ class BoardingPass
     highest_id = 0
 
     @boarding_passes.each do |pass|
-      puts "pass: #{pass}"
-      row = row_number(pass)
-      # puts "Row: #{row}"
-      column = column_number(pass)
-      # puts "Column: #{column}"
-      seat_id_number = seat_id(row, column)
-      puts "Seat ID: #{seat_id_number}"
+      seat_id_number = seat_id(pass)
       highest_id = seat_id_number if seat_id_number > highest_id
     end
 
     highest_id
+  end
+
+  def your_seat_id
+    seat_ids = []
+    open_seat = 0
+
+    @boarding_passes.each do |pass|
+      seat_ids << seat_id(pass)
+    end
+    seat_ids.sort!
+    seat_ids.each_index do |i|
+      if (seat_ids.length > (i + 1)) && ((seat_ids[i + 1]) - seat_ids[i] != 1)
+        open_seat = seat_ids[i] + 1
+      end
+    end
+    open_seat
   end
 
   private
@@ -34,7 +44,6 @@ class BoardingPass
   def row_number(pass)
     front = 0
     back = 127
-    # puts "starting => front: #{front} back: #{back}"
 
     rows = pass.split('').select{ |x| "BF".include?(x) }
     rows.each do |row_direction|
@@ -43,9 +52,8 @@ class BoardingPass
       else
         front = lower_half(back, front)
       end
-      # puts "#{row_direction} => front: #{front} back: #{back}"
     end
-    front
+    front.to_i
   end
 
   def upper_half(high, low)
@@ -59,7 +67,6 @@ class BoardingPass
   def column_number(pass)
     left = 0
     right = 7
-    # puts "starting => left: #{left} right: #{right}"
 
     columns = pass.split('').select{ |x| "LR".include?(x) }
 
@@ -69,13 +76,14 @@ class BoardingPass
       else
         left = lower_half(right, left)
       end
-      # puts "#{column_direction} => left: #{left} right: #{right}"
     end
 
-    left
+    left.to_i
   end
 
-  def seat_id(row, column)
+  def seat_id(pass)
+    row = row_number(pass)
+    column = column_number(pass)
     row * 8 + column
   end
 
