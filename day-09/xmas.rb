@@ -12,7 +12,7 @@ class Xmas
     end
   end
 
-  def no_sum(preamble_length)
+  def no_sum_in_preambles(preamble_length)
     @numbers_to_check = @numbers[preamble_length..-1]
     preamble_start = -1
     @numbers_to_check.each do |number|
@@ -23,7 +23,34 @@ class Xmas
     -1
   end
 
+  def sum_of_range_ends_summing_to(target_number)
+    puts "target number: #{target_number}"
+    @numbers.each_with_index do |x,i|
+      next if x == target_number
+      numbers_to_check = @numbers[i..-1]
+      puts "*** Starting x = #{x}"
+      y = sum_in_list_ending(target_number, x, numbers_to_check)
+      return x + y if y != -1
+    end
+  end
+
   private
+
+  def sum_in_list_ending(target_number, x, numbers_to_check)
+    sum = x
+    numbers_to_check.each do |y|
+      next if x == y
+      puts "Checking y = #{y}"
+      sum += y
+      if (sum == target_number)
+        puts "**** Found a sum #{sum} = #{target_number} ****"
+        return y
+      end
+      break if sum > target_number
+    end
+
+    -1
+  end
 
   def sum_in_preambles?(number, preamble_set)
     puts "number #{number}"
