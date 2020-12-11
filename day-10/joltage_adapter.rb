@@ -34,15 +34,14 @@ class JoltageAdapter
   def distinct_paths
     device_jolts = @adapters[-1] + 3
 
-    puts "*" * 80
     connect_adapters(-1, 0, device_jolts)
   end
 
   private
 
   def connect_adapters(adapter_position, adapter_jolts, device_jolts)
-    puts "#{adapter_jolts} !" * 120
-    puts "adapter_position: #{adapter_position}, adapter_jolts: #{adapter_jolts}, device_jolts: #{device_jolts}"
+    # puts "#{adapter_jolts} !" * 120
+    # puts "adapter_position: #{adapter_position}, adapter_jolts: #{adapter_jolts}, device_jolts: #{device_jolts}"
     connections = 0
     remaining_adapters = []
 
@@ -51,31 +50,31 @@ class JoltageAdapter
 
     # get the next set
     next_adapter_position = adapter_position + 1
-    puts "#{adapter_jolts} next adapter_position = #{next_adapter_position}"
+    # puts "#{adapter_jolts} next adapter_position = #{next_adapter_position}"
     remaining_adapters = @adapters[next_adapter_position..-1]
-    puts "#{adapter_jolts} remaining_adapters = #{remaining_adapters}"
-    puts "#{adapter_jolts} -------------"
+    # puts "#{adapter_jolts} remaining_adapters = #{remaining_adapters}"
+    # puts "#{adapter_jolts} -------------"
 
     # process the next set
     remaining_adapters.each_with_index do |remaining_adapter, i|
       remaining_adapter_position = next_adapter_position + i
       jump_size = (remaining_adapter - adapter_jolts)
-      puts "#{adapter_jolts} RA: #{remaining_adapter}: jump size = #{jump_size}"
-      puts "#{adapter_jolts} breaking" if jump_size > 3
+      # puts "#{adapter_jolts} RA: #{remaining_adapter}: jump size = #{jump_size}"
+      # puts "#{adapter_jolts} breaking" if jump_size > 3
       break if jump_size > 3
-      puts "#{adapter_jolts} Skipping" if jump_size == 2
+      # puts "#{adapter_jolts} Skipping" if jump_size == 2
       next if jump_size == 2
-      puts "#{adapter_jolts} RA: #{remaining_adapter}: &&& remaining_adapter_position: #{remaining_adapter_position} remaining_adapter: #{remaining_adapter} device_jolts: #{device_jolts}"
+      # puts "#{adapter_jolts} RA: #{remaining_adapter}: &&& remaining_adapter_position: #{remaining_adapter_position} remaining_adapter: #{remaining_adapter} device_jolts: #{device_jolts}"
       counter = connect_adapters(remaining_adapter_position, remaining_adapter, device_jolts)
       connections += counter
-      puts "#{adapter_jolts} has #{connections} connections and counting"
+      # puts "#{adapter_jolts} has #{connections} connections and counting"
     end
     puts "#{adapter_jolts} has #{connections} connections total"
     connections
   end
 
   def is_last_adapter?(adapter_jolts, device_jolts)
-    puts "THis is the Last adapter" if adapter_jolts + 3 == device_jolts
+    # puts "THis is the Last adapter" if adapter_jolts + 3 == device_jolts
     return true if adapter_jolts + 3 == device_jolts
     false
   end
