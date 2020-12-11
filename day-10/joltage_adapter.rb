@@ -24,12 +24,61 @@ class JoltageAdapter
       end
     end
 
+    # last jump to the device which is 3 jolts more than the highest adapter
+    jump @adapters[-1] + 3, @adapters[-1]
+
     puts "Final: one_jumps = #{@one_jumps} | three_jumps = #{@three_jumps}"
-    # add one 3 volt jump for the final connection to the device
-    @one_jumps * (@three_jumps + 1)
+    @one_jumps * (@three_jumps)
+  end
+
+  def distinct_paths
+    device_jolts = @adapters[-1] + 3
+
+    puts "*" * 80
+    connect_adapters(-1, 0, device_jolts)
   end
 
   private
+
+  def connect_adapters(adapter_position, adapter_jolts, device_jolts)
+    puts "#{adapter_jolts} !" * 120
+    puts "adapter_position: #{adapter_position}, adapter_jolts: #{adapter_jolts}, device_jolts: #{device_jolts}"
+    connections = 0
+    remaining_adapters = []
+
+    # check the one passed in
+    return 1 if is_last_adapter?(adapter_jolts, device_jolts)
+
+    # get the next set
+    next_adapter_position = adapter_position + 1
+    puts "#{adapter_jolts} next adapter_position = #{next_adapter_position}"
+    remaining_adapters = @adapters[next_adapter_position..-1]
+    puts "#{adapter_jolts} remaining_adapters = #{remaining_adapters}"
+    puts "#{adapter_jolts} -------------"
+
+    # process the next set
+    remaining_adapters.each_with_index do |remaining_adapter, i|
+      remaining_adapter_position = next_adapter_position + i
+      jump_size = (remaining_adapter - adapter_jolts)
+      puts "#{adapter_jolts} RA: #{remaining_adapter}: jump size = #{jump_size}"
+      puts "#{adapter_jolts} breaking" if jump_size > 3
+      break if jump_size > 3
+      puts "#{adapter_jolts} Skipping" if jump_size == 2
+      next if jump_size == 2
+      puts "#{adapter_jolts} RA: #{remaining_adapter}: &&& remaining_adapter_position: #{remaining_adapter_position} remaining_adapter: #{remaining_adapter} device_jolts: #{device_jolts}"
+      counter = connect_adapters(remaining_adapter_position, remaining_adapter, device_jolts)
+      connections += counter
+      puts "#{adapter_jolts} has #{connections} connections and counting"
+    end
+    puts "#{adapter_jolts} has #{connections} connections total"
+    connections
+  end
+
+  def is_last_adapter?(adapter_jolts, device_jolts)
+    puts "THis is the Last adapter" if adapter_jolts + 3 == device_jolts
+    return true if adapter_jolts + 3 == device_jolts
+    false
+  end
 
   def jump(next_adapter, first_adapter)
     jump_size = next_adapter - first_adapter
